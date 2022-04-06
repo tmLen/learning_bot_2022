@@ -1,6 +1,7 @@
+from emoji import emojize
+from glob import glob #для доступа к файлам
 import logging
-
-from random import randint
+from random import choice, randint
 from telegram.ext import CommandHandler, Updater, MessageHandler, Filters
 # Updater - компонент отвечающий за обмен данными с сервером Телеграм
 # CommandHandler - компонет отвечающий за обрабтку комманд
@@ -12,13 +13,20 @@ import settings
 # старт логирования
 logging.basicConfig(filename='bot.log', level=logging.INFO)
 
+def get_smile():
+    smile = choice(settings.USER_EMOJI)
+    return emojize(smile, language='alias')
+    
+
 #функция которая выводит приветствие пользователю при команде /start
 def greet_user(update, context):
-    update.message.reply_text(f'Добрый день!')
+    smile = get_smile()
+    update.message.reply_text(f'Здравствуй, пользователь {smile}!')
 
 def talk_to_me(update, context):
     text = update.message.text
-    update.message.reply_text(text)
+    smile = get_smile()
+    update.message.reply_text(f'{text} {smile}')
 
 def play_random_numbers(user_number):
     bot_number = randint(user_number - 10, user_number + 10)
@@ -43,6 +51,16 @@ def guess_number(update, context):
         message = 'Введите число'
     update.message.reply_text(message)
 
+def send_cat_picture(update, context):
+    # выбираем все файлы из папки images с названием содержащим cat
+    # выбираем из них случайное
+    # отправляем в чат
+    cat_photos_list = glob('images/cat*.jp*g')
+    cat_pic_filename = choice(cat_photos_list)
+
+    chat_id = update.effective_chat.id
+    context.bot.send_photo(chat_id=chat_id, photo=open(cat_pic_filename, 'rb'))
+
 def main():
     #создаем апдейтер
     mybot = Updater(settings.API_KEY, use_context=True)
@@ -50,9 +68,12 @@ def main():
     #добавляем диспетчер    
     dp = mybot.dispatcher
 
-    #добавление обрабоки команды /start
+    #добавление обрабоки команд /start /guess  /cat
     dp.add_handler(CommandHandler('start', greet_user))
     dp.add_handler(CommandHandler('guess', guess_number))
+    dp.add_handler(CommandHandler('cat', send_cat_picture))
+
+    #добавление обрабокти текстовых сообщений пользователя
     dp.add_handler(MessageHandler(Filters.text, talk_to_me))
 
     logging.info('Бот стартовал')
