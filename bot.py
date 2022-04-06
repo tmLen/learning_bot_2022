@@ -13,19 +13,20 @@ import settings
 # старт логирования
 logging.basicConfig(filename='bot.log', level=logging.INFO)
 
-def get_smile():
-    smile = choice(settings.USER_EMOJI)
-    return emojize(smile, language='alias')
-    
+def get_smile(user_data):
+    if 'emoji' not in user_data:
+        smile = choice(settings.USER_EMOJI)
+        user_data['emoji'] = emojize(smile, language='alias')
+    return user_data['emoji']
 
 #функция которая выводит приветствие пользователю при команде /start
 def greet_user(update, context):
-    smile = get_smile()
+    smile = get_smile(context.user_data)
     update.message.reply_text(f'Здравствуй, пользователь {smile}!')
 
 def talk_to_me(update, context):
     text = update.message.text
-    smile = get_smile()
+    smile = get_smile(context.user_data)
     update.message.reply_text(f'{text} {smile}')
 
 def play_random_numbers(user_number):
