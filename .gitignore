@@ -1,4 +1,8 @@
 env/
 *.log
 settings.py
-__pycache__
+__pycache__/
+.vscode/
+.idea/
+enb/
+.DS_Store
