@@ -1,7 +1,8 @@
 from glob import glob #для доступа к файлам
+import os
 from random import choice
 
-from utils import get_smile, main_keyboard, play_random_numbers
+from utils import get_smile, main_keyboard, play_random_numbers, has_object_on_image 
 
 #функция которая выводит приветствие пользователю при команде /start
 def greet_user(update, context):
@@ -50,3 +51,20 @@ def user_coordinates(update, context):
         f'Ваши координаты {coord} {smile}',
         reply_markup = main_keyboard()
     )
+
+#функция проверки есть ли на фото котик
+def check_user_photo(update, context):
+    update.message.reply_text('Обрабатываем фото')
+    os.makedirs('downloads', exist_ok=True) 
+    photo_file = context.bot.getFile(update.message.photo[-1].file_id)
+    file_name = os.path.join('downloads',f'{update.message.photo[-1].file_id}.jpg')
+    photo_file.download(file_name)
+    update.message.reply_text('Файл сохранен')
+    if has_object_on_image(file_name, 'cat'):
+        update.message.reply_text('Обнаружен котик, сохраняю в библиотеку')
+        new_file_name = os.path.join('images', f'cat_{photo_file.file_id}.jpg')
+        os.rename(file_name, new_file_name)
+    else:
+        os.remove(file_name)
+        update.message.reply_text('Котик не обнаружен')
+

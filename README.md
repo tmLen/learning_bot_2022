@@ -9,7 +9,9 @@ tmlen_bot - бот для телеграм, который нужен чтобы
 4. Создайте файл `settings.py` 
 5. Впишите в settings.py переменные 
 ```
-API_KEY = 'api-ключ'
+API_KEY = 'api-ключ от телеграм бота '
+CLARIFAI_API_KEY = 'api ключ бота clarifai'
 USER_EMOJI = [':smiley_cat:', ':smiling_imp:', ':panda_face:', ':dog:']
+
 ```
 6. Запустите бота командой `python bot.py`
