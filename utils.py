@@ -28,7 +28,8 @@ def get_smile(user_data):
 
 def main_keyboard():
     return ReplyKeyboardMarkup([
-        ['Прислать котика', KeyboardButton('Мои координаты', request_location=True)]
+        ['Прислать котика', KeyboardButton('Мои координаты', request_location=True)],
+        ['Заполнить анкету']
     ])
 
 
